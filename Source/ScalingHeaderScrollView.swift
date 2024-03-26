@@ -366,7 +366,11 @@ public struct ScalingHeaderScrollView<Header: View, Content: View>: View {
     }
 
     private func getGeometryReaderVsScrollView(scrollGeometry: GeometryProxy, globalGeometry: GeometryProxy) -> CGFloat {
-        getScrollOffset() - scrollGeometry.frame(in: .global).minY + globalGeometry.frame(in: .global).minY
+        if #available(iOS 17.0, *), let bounds = scrollGeometry.bounds(of: .scrollView) {
+            getScrollOffset() + bounds.minY
+        } else {
+            getScrollOffset() - scrollGeometry.frame(in: .global).minY - globalGeometry.frame(in: .global).minY
+        }
     }
 
     private func getOffsetForHeader() -> CGFloat {
